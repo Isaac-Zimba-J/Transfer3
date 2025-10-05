@@ -69,8 +69,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Domain/Contracts/" />
-	  <Folder Include="Domain/Enums/" />
-	  <Folder Include="Helpers/" />
 	  <Folder Include="Infrastructure/" />
 	  <Folder Include="Infrastructure/Platforms/" />
 	  <Folder Include="ViewModels/" />
