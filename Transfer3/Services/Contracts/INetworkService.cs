@@ -34,4 +34,6 @@ public interface INetworkService
     /// </summary>
     Task<string> GetBroadcastAddressAsync();
 
+
+
 }
