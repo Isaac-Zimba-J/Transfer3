@@ -37,7 +37,7 @@ public interface IDeviceDiscoveryService
     /// Broadcast a discovery message to find other devices
     /// this actively searches for other devices
     /// </summary>
-    Task BroadcastDiscoveryAsync();
+    Task BroadcastPresenceAsync();
 
     /// <summary>
     /// Get a list of currently discovered devices

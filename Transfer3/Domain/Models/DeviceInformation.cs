@@ -8,7 +8,7 @@ public class DeviceInformation
     public string Name { get; set; } = string.Empty;
     public string IpAddress { get; set; } = string.Empty;
     public int Port { get; set; } = 0;
-    public DeviceType DeviceType { get; set; }
+    public DeviceType MyDeviceType { get; set; }
     public bool IsOnline { get; set; }
     public DateTime LastSeen { get; set; } = DateTime.UtcNow;
     public bool IsCurrentDevice { get; set; }
