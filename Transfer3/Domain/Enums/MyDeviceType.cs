@@ -6,5 +6,6 @@ public enum MyDeviceType
     iOS,
     macOS,
     Windows,
+
     Unknown
 }

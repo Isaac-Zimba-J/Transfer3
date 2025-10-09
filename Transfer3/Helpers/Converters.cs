@@ -61,15 +61,14 @@ public class DeviceTypeToIconConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is DeviceType deviceType)
+        if (value is MyDeviceType deviceType)
         {
             return deviceType switch
             {
-                DeviceType.Android => "📱",
-                DeviceType.iOS => "📱",
-                DeviceType.Windows => "💻",
-                DeviceType.macOS => "💻",
-                DeviceType.Linux => "🖥️",
+                MyDeviceType.Android => "📱",
+                MyDeviceType.iOS => "📱",
+                MyDeviceType.Windows => "💻",
+                MyDeviceType.macOS => "💻",
                 _ => "❓"
             };
         }

@@ -1,16 +1,19 @@
-using System;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Transfer3.Domain.Enums;
 using Transfer3.Domain.Models;
 using Transfer3.Services.Contracts;
+using System.Collections.ObjectModel;
+using Transfer3.Helpers;
+using Transfer3.Domain.Enums;
 
 namespace Transfer3.ViewModels;
 
+/// <summary>
+/// Main ViewModel for the device discovery and file transfer screen
+/// Uses CommunityToolkit.Mvvm for automatic INotifyPropertyChanged implementation
+/// </summary>
 public partial class MainPageViewModel : ObservableObject
 {
-
     private readonly IDeviceDiscoveryService _discoveryService;
     private readonly IFileTransferService _transferService;
     private readonly IFilePickerService _filePickerService;
@@ -18,13 +21,16 @@ public partial class MainPageViewModel : ObservableObject
 
     [ObservableProperty]
     private DeviceInformation? _currentDevice;
+
     [ObservableProperty]
     private bool _isDiscovering;
+
     [ObservableProperty]
     private bool _isConnected;
-    [ObservableProperty]
 
+    [ObservableProperty]
     private string _statusMessage = "Not connected";
+
     [ObservableProperty]
     private DeviceInformation? _selectedDevice;
 
@@ -32,12 +38,11 @@ public partial class MainPageViewModel : ObservableObject
     public ObservableCollection<FileTransferInfo> ActiveTransfers { get; } = new();
     public ObservableCollection<FileTransferInfo> TransferHistory { get; } = new();
 
-
     public MainPageViewModel(
-            IDeviceDiscoveryService discoveryService,
-            IFileTransferService transferService,
-            IFilePickerService filePickerService,
-            INetworkService networkService)
+        IDeviceDiscoveryService discoveryService,
+        IFileTransferService transferService,
+        IFilePickerService filePickerService,
+        INetworkService networkService)
     {
         _discoveryService = discoveryService;
         _transferService = transferService;
@@ -53,14 +58,21 @@ public partial class MainPageViewModel : ObservableObject
         _networkService.ConnectivityChanged += OnConnectivityChanged;
     }
 
-
-    // Commands
     [RelayCommand]
     private async Task InitializeAsync()
     {
         try
         {
+            // Request permissions first
+            var hasPermissions = await Transfer3.Helpers.PermissionHelper.RequestPermissionsAsync();
+            if (!hasPermissions)
+            {
+                StatusMessage = "Permissions required to use this app";
+                return;
+            }
+
             IsConnected = await _networkService.IsConnectedAsync();
+
             if (!IsConnected)
             {
                 StatusMessage = "No network connection";
@@ -70,10 +82,9 @@ public partial class MainPageViewModel : ObservableObject
             CurrentDevice = await _discoveryService.GetCurrentDeviceInfoAsync();
             StatusMessage = $"Ready - {CurrentDevice.Name}";
 
-            // start services
+            // Start services
             await _transferService.StartListeningAsync();
             await StartDiscoveryAsync();
-
         }
         catch (Exception ex)
         {
@@ -98,7 +109,6 @@ public partial class MainPageViewModel : ObservableObject
             StatusMessage = $"Discovery error: {ex.Message}";
         }
     }
-
 
     [RelayCommand]
     private async Task StopDiscoveryAsync()
@@ -132,6 +142,7 @@ public partial class MainPageViewModel : ObservableObject
             StatusMessage = $"Error: {ex.Message}";
         }
     }
+
     [RelayCommand(CanExecute = nameof(CanSendFile))]
     private async Task SendFileAsync()
     {
@@ -297,5 +308,4 @@ public partial class MainPageViewModel : ObservableObject
         // Update CanExecute for SendFileCommand
         SendFileCommand.NotifyCanExecuteChanged();
     }
-
 }
