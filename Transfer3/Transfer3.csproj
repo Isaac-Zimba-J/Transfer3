@@ -71,7 +71,6 @@
 	  <Folder Include="Domain/Contracts/" />
 	  <Folder Include="Infrastructure/" />
 	  <Folder Include="Infrastructure/Platforms/" />
-	  <Folder Include="ViewModels/" />
 	  <Folder Include="Views/" />
 	</ItemGroup>
 
