@@ -1,8 +1,188 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:button="clr-namespace:Syncfusion.Maui.Toolkit.Buttons;assembly=Syncfusion.Maui.Toolkit"
-             xmlns:input="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:models="clr-namespace:Transfer3.Domain.Models"
+             xmlns:viewModels="clr-namespace:Transfer3.ViewModels"
+             x:DataType="viewModels:MainPageViewModel"
              x:Class="Transfer3.MainPage">
-    <ScrollView />
+    <ScrollView>
+        <VerticalStackLayout Padding="20"
+                             Spacing="20">
+            <!-- HEADER SECTION -->
+            <Border Stroke="{StaticResource Primary}"
+                    StrokeShape="RoundRectangle 10"
+                    StrokeThickness="2"
+                    BackgroundColor="White"
+                    Padding="15"
+                    Shadow="5">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0"
+                                         Spacing="5">
+                        <Label Text="This Device"
+                               FontAttributes="Bold"
+                               FontSize="16" />
+                        <Label Text="{Binding CurrentDevice.Name}"
+                               FontSize="14" />
+                        <Label Text="{Binding CurrentDevice.IpAddress}"
+                               FontSize="12"
+                               TextColor="Gray" />
+                    </VerticalStackLayout>
+                    <BoxView Grid.Column="1"
+                             WidthRequest="20"
+                             HeightRequest="20"
+                             CornerRadius="10"
+                             VerticalOptions="Center"
+                             Color="{Binding IsConnected, Converter={StaticResource BoolToColorConverter}}" />
+                </Grid>
+            </Border>
+            <Label Text="{Binding StatusMessage}"
+                   FontSize="14"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource Primary}" />
+            <!-- CONTROL BUTTONS -->
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="Start Discovery"
+                        Command="{Binding StartDiscoveryCommand}"
+                        IsEnabled="{Binding IsDiscovering, Converter={StaticResource InverseBoolConverter}}" />
+                <Button Grid.Column="1"
+                        Text="Refresh"
+                        Command="{Binding RefreshDevicesCommand}"
+                        IsEnabled="{Binding IsDiscovering}" />
+                <Button Grid.Column="2"
+                        Text="Stop"
+                        Command="{Binding StopDiscoveryCommand}"
+                        IsEnabled="{Binding IsDiscovering}" />
+            </Grid>
+            <!-- DEVICES SECTION -->
+            <Label Text="Available Devices"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+            <CollectionView ItemsSource="{Binding DiscoveredDevices}"
+                            SelectedItem="{Binding SelectedDevice}"
+                            SelectionMode="Single"
+                            EmptyView="No devices found. Make sure other devices are running the app.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:DeviceInfo">
+                        <Border Stroke="{StaticResource Primary}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="15"
+                                Margin="0,5"
+                                BackgroundColor="White"
+                                Shadow="2">
+                            <Grid ColumnDefinitions="Auto,*,Auto"
+                                  ColumnSpacing="15">
+                                <Label Grid.Column="0"
+                                       Text="{Binding DeviceType, Converter={StaticResource DeviceTypeToIconConverter}}"
+                                       FontSize="32"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="5">
+                                    <Label Text="{Binding Name}"
+                                           FontAttributes="Bold"
+                                           FontSize="16" />
+                                    <Label Text="{Binding IpAddress}"
+                                           FontSize="12"
+                                           TextColor="Gray" />
+                                    <Label Text="{Binding DeviceType}"
+                                           FontSize="12"
+                                           TextColor="Gray" />
+                                </VerticalStackLayout>
+                                <BoxView Grid.Column="2"
+                                         WidthRequest="15"
+                                         HeightRequest="15"
+                                         CornerRadius="7.5"
+                                         Color="Green"
+                                         VerticalOptions="Center"
+                                         IsVisible="{Binding IsOnline}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button Text="Send File to Selected Device"
+                    Command="{Binding SendFileCommand}"
+                    HeightRequest="50"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    Margin="0,10,0,0" />
+            <!-- ACTIVE TRANSFERS -->
+            <Label Text="Active Transfers"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+            <CollectionView ItemsSource="{Binding ActiveTransfers}"
+                            EmptyView="No active transfers">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FileTransferInfo">
+                        <Border Stroke="LightGray"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="15"
+                                Margin="0,5"
+                                BackgroundColor="White">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding FileName}"
+                                       FontAttributes="Bold"
+                                       FontSize="16" />
+                                <ProgressBar Progress="{Binding Progress, Converter={StaticResource PercentToDecimalConverter}}"
+                                             ProgressColor="{StaticResource Primary}" />
+                                <Grid ColumnDefinitions="*,*">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Progress, StringFormat='{0:F1}%'}"
+                                           FontSize="12" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding TransferSpeed, Converter={StaticResource SpeedConverter}}"
+                                           FontSize="12"
+                                           HorizontalOptions="End" />
+                                </Grid>
+                                <Button Text="Cancel"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainPageViewModel}}, Path=CancelTransferCommand}"
+                                        CommandParameter="{Binding Id}"
+                                        BackgroundColor="Red"
+                                        TextColor="White"
+                                        HeightRequest="40" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <!-- HISTORY -->
+            <Label Text="Transfer History"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+            <CollectionView ItemsSource="{Binding TransferHistory}"
+                            EmptyView="No transfer history">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FileTransferInfo">
+                        <Border Stroke="LightGray"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="15"
+                                Margin="0,5"
+                                BackgroundColor="White">
+                            <VerticalStackLayout Spacing="5">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding FileName}"
+                                           FontAttributes="Bold"
+                                           FontSize="16" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Status}"
+                                           FontSize="12"
+                                           TextColor="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                                <Label Text="{Binding StartTime, StringFormat='Started: {0:g}'}"
+                                       FontSize="12"
+                                       TextColor="Gray" />
+                                <Label Text="{Binding DestinationDevice.Name, StringFormat='To: {0}'}"
+                                       FontSize="12"
+                                       TextColor="Gray" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
