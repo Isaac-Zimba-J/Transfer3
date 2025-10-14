@@ -12,4 +12,5 @@ public class DeviceInformation
     public bool IsOnline { get; set; }
     public DateTime LastSeen { get; set; } = DateTime.UtcNow;
     public bool IsCurrentDevice { get; set; }
+    public string DeviceType => MyDeviceType.ToString();
 }

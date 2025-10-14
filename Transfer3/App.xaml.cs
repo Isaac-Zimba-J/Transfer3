@@ -1,4 +1,8 @@
-﻿namespace Transfer3;
+﻿using Transfer3.ViewModels;
+using Transfer3.Services.Implementations;
+using Transfer3.Services.Contracts;
+
+namespace Transfer3;
 
 public partial class App : Application
 {
@@ -9,6 +13,18 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		return new Window(new AppShell());
+		var networkService = new NetworkService();
+		var deviceInfoService = new DeviceInfoService();
+		var filePickerService = new FilePickerService();
+		var deviceDiscoveryService = new DeviceDiscoveryService(networkService, deviceInfoService);
+		var fileTransferService = new FileTransferService();
+
+		var viewModel = new MainPageViewModel(
+			deviceDiscoveryService,
+			fileTransferService,
+			filePickerService,
+			networkService);
+
+		return new Window(new NavigationPage(new MainPage(viewModel)));
 	}
 }

@@ -49,9 +49,10 @@ public class DeviceDiscoveryService : IDeviceDiscoveryService
 
 
 
-    public Task ClearDiscoveredDevicesAsync()
+    public async Task ClearDiscoveredDevicesAsync()
     {
-        throw new NotImplementedException();
+        _discoveredDevices.Clear();
+        await Task.CompletedTask;
     }
 
     public async Task<DeviceInformation> GetCurrentDeviceInfoAsync()
@@ -102,7 +103,7 @@ public class DeviceDiscoveryService : IDeviceDiscoveryService
         _currentDevice = await GetCurrentDeviceInfoAsync();
 
         // start listening for broadcasts
-        await StartDiscoveryAsync();
+        await StartListeningAsync();
 
         // Start heartbeat broadcasting
         _ = Task.Run(() => BroadcastHeartbeatLoopAsync(_discoveryToken.Token));
@@ -245,6 +246,7 @@ public class DeviceDiscoveryService : IDeviceDiscoveryService
             }
         }
     }
+
 
     private async Task MonitorDeviceTimeoutsAsync(CancellationToken token)
     {

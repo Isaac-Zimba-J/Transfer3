@@ -6,10 +6,12 @@
              x:Class="Transfer3.App">
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            <!-- Colors -->
+            <Color x:Key="Primary">#1a237e</Color>
+            <Color x:Key="PrimaryDark">#000051</Color>
+            <Color x:Key="PrimaryLight">#534bae</Color>
+            <Color x:Key="Secondary">#2962ff</Color>
+            <Color x:Key="Tertiary">#2979ff</Color>
             <!-- Register Value Converters -->
             <helpers:InverseBoolConverter x:Key="InverseBoolConverter" />
             <helpers:BoolToColorConverter x:Key="BoolToColorConverter" />
@@ -17,6 +19,62 @@
             <helpers:PercentToDecimalConverter x:Key="PercentToDecimalConverter" />
             <helpers:SpeedConverter x:Key="SpeedConverter" />
             <helpers:StatusToColorConverter x:Key="StatusToColorConverter" />
+            <!-- Styles -->
+            <Style TargetType="Button">
+                <Setter Property="TextColor"
+                        Value="White" />
+                <Setter Property="BackgroundColor"
+                        Value="{StaticResource Primary}" />
+                <Setter Property="FontFamily"
+                        Value="OpenSansRegular" />
+                <Setter Property="FontSize"
+                        Value="14" />
+                <Setter Property="CornerRadius"
+                        Value="10" />
+                <Setter Property="Padding"
+                        Value="14,10" />
+                <Setter Property="MinimumHeightRequest"
+                        Value="44" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="{StaticResource Primary}"
+                                Offset="2,2"
+                                Radius="8"
+                                Opacity="0.2" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="TextColor"
+                        Value="{StaticResource Primary}" />
+                <Setter Property="FontFamily"
+                        Value="OpenSansRegular" />
+                <Setter Property="FontSize"
+                        Value="14" />
+            </Style>
+            <Style TargetType="Border">
+                <Setter Property="Stroke"
+                        Value="{StaticResource Primary}" />
+                <Setter Property="StrokeThickness"
+                        Value="1" />
+                <Setter Property="BackgroundColor"
+                        Value="White" />
+                <Setter Property="Padding"
+                        Value="16" />
+                <Setter Property="StrokeShape">
+                    <Setter.Value>
+                        <RoundRectangle CornerRadius="12" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="{StaticResource Primary}"
+                                Offset="2,2"
+                                Radius="8"
+                                Opacity="0.2" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
