@@ -1,4 +1,4 @@
-# 📁 Cross-Platform File Trasnfer3
+# 📁 Cross-Platform File Transfer3
 
 A modern, wireless file transfer application built with .NET MAUI that enables seamless file sharing between Android, iOS, Windows, and macOS devices on the same local network.
 
@@ -16,7 +16,61 @@ A modern, wireless file transfer application built with .NET MAUI that enables s
 - 📜 **Transfer History** - Track all your file transfers
 - 🎨 **Modern UI** - Clean, intuitive Material Design interface
 
-## Screenshots
+## 📸 Screenshots
+
+_Coming soon - Screenshots of the app in action!_
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     FILE TRANSFER APP ARCHITECTURE                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                         PRESENTATION LAYER                           │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│  │  MainPage    │  │   Devices    │  │   Active     │              │
+│  │   (XAML)     │  │     Tab      │  │  Transfers   │              │
+│  └──────────────┘  └──────────────┘  └──────────────┘              │
+└─────────────────────────────────────────────────────────────────────┘
+                              ▲ Data Binding
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                       APPLICATION LAYER (MVVM)                       │
+│  ┌──────────────────────────────────────────────────────┐           │
+│  │              MainViewModel (ObservableObject)         │           │
+│  │  • Commands: Start/Stop Discovery, Send File         │           │
+│  │  • Properties: Devices, Transfers, Status             │           │
+│  │  • Events: Progress, Completion, Discovery            │           │
+│  └──────────────────────────────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────────────┘
+                              ▲ Dependency Injection
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                          SERVICE LAYER                               │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │    Discovery    │  │  File Transfer  │  │    Network      │    │
+│  │     Service     │  │     Service     │  │    Service      │    │
+│  │                 │  │                 │  │                 │    │
+│  │  • Broadcast    │  │  • Send File    │  │  • Get IP       │    │
+│  │  • Listen       │  │  • Receive      │  │  • Check Conn   │    │
+│  │  • Heartbeat    │  │  • Progress     │  │  • Broadcast    │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+                              ▲
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                          DOMAIN LAYER                                │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
+│  │   DeviceInfo    │  │ FileTransferInfo│  │     Enums       │    │
+│  │                 │  │                 │  │                 │    │
+│  │  • Name         │  │  • FileName     │  │  • DeviceType   │    │
+│  │  • IP Address   │  │  • Progress     │  │  • Status       │    │
+│  │  • DeviceType   │  │  • Speed        │  │  • MessageType  │    │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ## 🔄 How It Works - Visual Flow
 
@@ -154,37 +208,55 @@ TCP File Transfer Packet Structure:
 ## 📋 Prerequisites
 
 - **.NET 9 SDK** or later
-- **Visual Studio 2022** (17.8+) or **Visual Studio Code** with C# extensions
+- **Visual Studio Code** with C# Dev Kit extension
 - **MAUI Workload**: Run `dotnet workload install maui`
+- **Dotnet Meteor Extension** by Nikita Romanov - [Install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=JaneySprings.dotnet-meteor)
 
 ### Platform-Specific Requirements
 
 - **Android**: Android SDK (API 21+), Android device or emulator
-- **iOS/macOS**: Xcode 15+, macOS Ventura or later
+- **iOS/macOS**: Xcode 15+, macOS Ventura or later (Mac only)
 - **Windows**: Windows 10 (1809+) or Windows 11
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repository
+### 1. Install Dotnet Meteor Extension
+
+1. Open **VS Code**
+2. Go to Extensions (`Ctrl+Shift+X` or `Cmd+Shift+X`)
+3. Search for **"Dotnet Meteor"** by Nikita Romanov
+4. Click **Install**
+
+![Dotnet Meteor](https://img.shields.io/badge/VS%20Code-Dotnet%20Meteor-007ACC?style=flat-square&logo=visual-studio-code)
+
+### 2. Clone the Repository
 
 ```bash
 git clone https://github.com/Isaac-Zimba-J/Transfer3.git
 cd Transfer3
 ```
 
-### 2. Install Dependencies
+### 3. Open in VS Code
+
+```bash
+code .
+```
+
+### 4. Install Dependencies
+
+Open VS Code Terminal (` Ctrl+`` or  `Cmd+``) and run:
 
 ```bash
 dotnet restore
 ```
 
-### 3. Install NuGet Packages
+### 5. Install NuGet Packages
 
 ```bash
 dotnet add package CommunityToolkit.Mvvm --version 8.2.2
 ```
 
-### 4. Configure Permissions
+### 6. Configure Permissions
 
 #### Android (Platforms/Android/AndroidManifest.xml)
 
@@ -201,60 +273,124 @@ Already configured with:
 - Network client/server capabilities
 - File access permissions
 
-### 5. Build and Run
+### 7. Build and Run with Dotnet Meteor
 
-#### Android
+#### Method 1: Using Command Palette
 
-```bash
-dotnet build -t:Run -f net9.0-android
-```
+1. Press `F1` or `Ctrl+Shift+P` (Windows/Linux) / `Cmd+Shift+P` (Mac)
+2. Type **"Meteor: Run Project"**
+3. Select your target platform (Android, iOS, Windows, macOS)
+4. Select your device/emulator
+5. Press Enter to build and run
 
-#### iOS
+#### Method 2: Using Status Bar
 
-```bash
-dotnet build -t:Run -f net9.0-ios
-```
+1. Look at the bottom status bar in VS Code
+2. Click on the **platform selector** (shows current platform)
+3. Choose your target platform
+4. Click the **device selector** to choose device/emulator
+5. Click the **▶ Run** button in the status bar
 
-#### macOS
+#### Method 3: Using Debug Panel
 
-```bash
-dotnet build -t:Run -f net9.0-maccatalyst
-```
+1. Open the **Run and Debug** panel (`Ctrl+Shift+D` or `Cmd+Shift+D`)
+2. Select configuration from dropdown (e.g., "Android", "iOS", "Windows")
+3. Click **▶ Start Debugging** or press `F5`
 
-#### Windows
+### 8. Platform-Specific Instructions
 
-```bash
-dotnet build -t:Run -f net9.0-windows10.0.19041.0
-```
+#### 📱 Android
 
-## 📱 Usage
+1. Enable **Developer Options** on your Android device:
+   - Go to Settings → About Phone
+   - Tap "Build Number" 7 times
+2. Enable **USB Debugging**:
+   - Settings → System → Developer Options → USB Debugging
+3. Connect device via USB or use Android emulator
+4. In VS Code, Dotnet Meteor will automatically detect your device
+5. Select device and click Run
+
+#### 🍎 iOS/macOS (Mac only)
+
+1. Ensure Xcode is installed with command line tools:
+   ```bash
+   xcode-select --install
+   ```
+2. For iOS device: Connect iPhone/iPad via USB
+3. Trust the computer on your iOS device when prompted
+4. In VS Code, select iOS/macOS from platform selector
+5. Select your device/simulator and click Run
+
+#### 🪟 Windows
+
+1. Enable Developer Mode:
+   - Settings → Update & Security → For Developers
+   - Toggle "Developer Mode" ON
+2. In VS Code, select Windows from platform selector
+3. Click Run (no device selection needed)
+
+## 📱 How to Use the App
 
 ### Step 1: Launch on Multiple Devices
 
-Install and launch the app on 2+ devices connected to the **same WiFi network**.
+1. Build and deploy the app to 2+ devices using Dotnet Meteor
+2. Ensure all devices are connected to the **same WiFi network**
+3. Launch the app on each device
 
 ### Step 2: Discover Devices
 
-The app automatically discovers nearby devices. You'll see them appear in the **Devices** tab within seconds.
+- The app **automatically starts discovery** when launched
+- Wait 2-5 seconds for devices to appear in the **Devices** tab
+- You'll see device names, IP addresses, and device types (📱 Android, 💻 Mac, etc.)
+- If devices don't appear, tap the **Refresh** button
 
 ### Step 3: Send a File
 
-1. Select a device from the **Devices** tab
-2. Tap **"Send File to Selected Device"**
-3. Choose a file from your device
-4. On the receiving device, tap **Accept** when prompted
+1. Go to the **Devices** tab
+2. **Tap on a device** to select it (it will be highlighted)
+3. Tap **"Send File to Selected Device"** button at the bottom
+4. Choose a file from your device using the file picker
+5. Wait for the receiving device to respond
 
-### Step 4: Monitor Progress
+### Step 4: Accept Incoming File (Receiver)
 
-Watch real-time transfer progress in the **Active** tab:
+1. A popup will appear: **"Receive [filename] from [device name]?"**
+2. Tap **Accept** to receive the file
+3. Choose a folder to save the file (or use default Downloads)
+4. Transfer starts automatically
 
-- Progress bar with percentage
-- Transfer speed (MB/s)
-- Remaining time estimate
+### Step 5: Monitor Progress
 
-### Step 5: View History
+Watch real-time transfer in the **Active** tab:
 
-Check completed transfers in the **History** tab.
+- **Progress bar** with percentage (0-100%)
+- **Transfer speed** (KB/s, MB/s)
+- **File name** and size
+- **Cancel button** to stop transfer if needed
+
+### Step 6: View History
+
+Check completed transfers in the **History** tab:
+
+- ✅ Completed transfers (green)
+- ❌ Failed transfers (red)
+- 🚫 Cancelled transfers (orange)
+- Timestamp and device info
+
+## 🎯 Quick Start Video Workflow
+
+```
+1. Open VS Code → Open Project Folder
+2. Press F5 (Start Debugging)
+3. Select Platform (Android/iOS/Windows/macOS)
+4. Select Device/Emulator
+5. App builds and launches automatically
+6. Repeat on second device
+7. Devices discover each other
+8. Select device → Send File → Accept on receiver
+9. Watch transfer progress
+10. Done! ✅
+```
 
 ## 🏗️ Project Structure
 
@@ -450,25 +586,51 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Isaac Zimba**
 
 - GitHub: [@Isaac-Zimba-J](https://github.com/Isaac-Zimba-J)
 - LinkedIn: [Isaac Zimba](https://www.linkedin.com/in/isaac-zimba-842061239/)
+- Email: zimbaisaacj2002@gmail.com
 
 ## 🙏 Acknowledgments
 
-- [.NET MAUI Team](https://github.com/dotnet/maui)
-- [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)
-- All contributors and testers
+This project was made possible thanks to these amazing tools and libraries:
+
+### Core Technologies
+
+- **[.NET MAUI Team](https://github.com/dotnet/maui)** - Microsoft's cross-platform UI framework
+- **[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)** - MVVM helpers and source generators
+
+### Development Tools
+
+- **[Dotnet Meteor](https://marketplace.visualstudio.com/items?itemName=JaneySprings.dotnet-meteor)** by **Nikita Romanov** - Essential VS Code extension that makes MAUI development seamless with device management, debugging, and deployment features
+- **[Visual Studio Code](https://code.visualstudio.com/)** - Lightweight, powerful code editor
+- **[C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)** - Microsoft's C# development tools
+
+### .NET Libraries Used
+
+- **System.Net.Sockets** - TCP/UDP networking
+- **System.Net.NetworkInformation** - Network interface management
+- **System.Text.Json** - JSON serialization
+- **Microsoft.Extensions.DependencyInjection** - Dependency injection framework
+- **Microsoft.Extensions.Logging** - Logging infrastructure
+
+### Special Thanks
+
+- **Nikita Romanov** ([@JaneySprings](https://github.com/JaneySprings)) - For creating and maintaining Dotnet Meteor, which dramatically improves the .NET MAUI development experience in VS Code
+- All contributors and testers who helped improve this project
+- The .NET community for continuous support and feedback
 
 ## 📞 Support
 
 - 📧 Email: zimbaisaacj2002@gmail.com
-- 🐛 Issues: [GitHub Issues](https://github.com/Isaac-Zimba-J/Transfer3.git/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/Isaac-Zimba-J/Transfer3.git/discussions)
+- 🐛 Issues: [GitHub Issues](https://github.com/Isaac-Zimba-J/Transfer3/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/Isaac-Zimba-J/Transfer3/discussions)
 
 ---
 
 **⭐ Star this repo if you find it helpful!**
 
 **🔗 Share with friends who need wireless file transfer!**
+
+**🚀 Built with VS Code + Dotnet Meteor**
