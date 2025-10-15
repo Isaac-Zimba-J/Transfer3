@@ -19,6 +19,10 @@ public partial class MainPageViewModel : ObservableObject
     private readonly IFilePickerService _filePickerService;
     private readonly INetworkService _networkService;
 
+    // Progress update throttling
+    private readonly Dictionary<string, DateTime> _lastProgressUpdate = new();
+    private readonly TimeSpan _progressUpdateInterval = TimeSpan.FromMilliseconds(500); // Update every 500ms
+
     [ObservableProperty]
     private DeviceInformation? _currentDevice;
 
@@ -173,6 +177,9 @@ public partial class MainPageViewModel : ObservableObject
         try
         {
             await _transferService.CancelTransferAsync(transferId);
+
+            // Clean up throttling tracking when transfer is cancelled
+            _lastProgressUpdate.Remove(transferId);
         }
         catch (Exception ex)
         {
@@ -207,6 +214,16 @@ public partial class MainPageViewModel : ObservableObject
 
     private void OnTransferProgressChanged(object? sender, FileTransferInfo transfer)
     {
+        // Throttle progress updates to prevent UI from updating too rapidly
+        var now = DateTime.Now;
+        if (_lastProgressUpdate.TryGetValue(transfer.Id, out var lastUpdate))
+        {
+            if (now - lastUpdate < _progressUpdateInterval)
+                return; // Skip this update
+        }
+
+        _lastProgressUpdate[transfer.Id] = now;
+
         MainThread.BeginInvokeOnMainThread(() =>
         {
             var existing = ActiveTransfers.FirstOrDefault(t => t.Id == transfer.Id);
@@ -229,6 +246,9 @@ public partial class MainPageViewModel : ObservableObject
             {
                 ActiveTransfers.Remove(existing);
             }
+
+            // Clean up throttling tracking
+            _lastProgressUpdate.Remove(transfer.Id);
 
             TransferHistory.Insert(0, transfer);
 

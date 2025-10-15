@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Transfer3.Domain.Enums;
+using Transfer3.Domain.Models;
 
 namespace Transfer3.Helpers;
 
@@ -9,14 +10,14 @@ namespace Transfer3.Helpers;
 /// </summary>
 public class InverseBoolConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
             return !boolValue;
         return false;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
             return !boolValue;
@@ -137,6 +138,54 @@ public class StatusToColorConverter : IValueConverter
             };
         }
         return Colors.Gray;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts transfer status to bool for ActivityIndicator (shows spinner only during active transfers)
+/// </summary>
+public class StatusToActivityConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is TransferStatus status)
+        {
+            return status == TransferStatus.InProgress;
+        }
+        return false;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts transfer speed and remaining bytes to estimated time remaining
+/// </summary>
+public class TimeRemainingConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is FileTransferInfo transfer && transfer.TransferSpeed > 0 && transfer.Progress < 100)
+        {
+            var remainingBytes = transfer.FileSize * (100 - transfer.Progress) / 100;
+            var remainingSeconds = remainingBytes / transfer.TransferSpeed;
+
+            if (remainingSeconds > 3600) // More than 1 hour
+                return $"{remainingSeconds / 3600:F0}h {(remainingSeconds % 3600) / 60:F0}m";
+            else if (remainingSeconds > 60) // More than 1 minute
+                return $"{remainingSeconds / 60:F0}m {remainingSeconds % 60:F0}s";
+            else if (remainingSeconds > 0)
+                return $"{remainingSeconds:F0}s";
+        }
+        return "";
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

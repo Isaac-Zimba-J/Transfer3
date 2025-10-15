@@ -360,5 +360,40 @@ public class FileTransferService : IFileTransferService
         return buffer;
     }
 
+    private async Task SendFileAsync(Stream fileStream, long fileSize, string fileName, IPEndPoint endpoint, string transferId)
+    {
+        var buffer = new byte[8192];
+        long totalBytesSent = 0;
+        var startTime = DateTime.UtcNow;
 
+        using var tcpClient = new TcpClient();
+        await tcpClient.ConnectAsync(endpoint.Address, endpoint.Port);
+        using var networkStream = tcpClient.GetStream();
+
+        while (totalBytesSent < fileSize)
+        {
+            var bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead == 0) break;
+
+            await networkStream.WriteAsync(buffer, 0, bytesRead);
+            totalBytesSent += bytesRead;
+
+            var progress = (double)totalBytesSent / fileSize * 100;
+            var transferTime = (DateTime.UtcNow - startTime).TotalSeconds;
+            var speed = totalBytesSent / transferTime; // bytes per second
+
+            UpdateTransferProgress(transferId, progress, speed);
+            await Task.Delay(100); // Prevent UI flooding
+        }
+    }
+
+    private void UpdateTransferProgress(string transferId, double progress, double speed)
+    {
+        if (_activeTransfers.TryGetValue(transferId, out var transfer))
+        {
+            transfer.Progress = Math.Min(progress, 100);
+            transfer.TransferSpeed = speed;
+            TransferProgressChanged?.Invoke(this, transfer);
+        }
+    }
 }
