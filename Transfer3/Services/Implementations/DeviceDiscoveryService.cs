@@ -95,9 +95,14 @@ public class DeviceDiscoveryService : IDeviceDiscoveryService
         if (_isDiscovering)
             return;
 
+        // Check if connected or hotspot is enabled
+        if (!await _networkService.IsConnectedAsync() && !await _networkService.IsWifiHotspotEnabled())
+        {
+            throw new InvalidOperationException("No network connection or hotspot available");
+        }
+
         _isDiscovering = true;
         _discoveryToken = new CancellationTokenSource();
-
 
         // get current device information
         _currentDevice = await GetCurrentDeviceInfoAsync();
@@ -113,7 +118,6 @@ public class DeviceDiscoveryService : IDeviceDiscoveryService
 
         // Send initial broadcast
         await BroadcastPresenceAsync();
-
     }
 
     public async Task StopDiscoveryAsync()
@@ -233,8 +237,12 @@ public class DeviceDiscoveryService : IDeviceDiscoveryService
         {
             try
             {
+                // Only broadcast if we have network connection or hotspot is enabled
+                if (await _networkService.IsConnectedAsync() || await _networkService.IsWifiHotspotEnabled())
+                {
+                    await BroadcastPresenceAsync();
+                }
                 await Task.Delay(TimeSpan.FromSeconds(HeartbeatIntervalSeconds), token);
-                await BroadcastPresenceAsync();
             }
             catch (OperationCanceledException)
             {

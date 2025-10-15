@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -10,7 +11,6 @@ namespace Transfer3.Services.Implementations;
 public class NetworkService : INetworkService
 {
     public event EventHandler<bool>? ConnectivityChanged;
-
 
     public NetworkService()
     {
@@ -40,6 +40,14 @@ public class NetworkService : INetworkService
 
     public async Task<string> GetLocalIpAddressAsync()
     {
+        if (await IsWifiHotspotEnabled())
+        {
+            // When hotspot is enabled, prefer the hotspot interface IP
+            var hotspotIp = GetHotspotIpAddress();
+            if (!string.IsNullOrEmpty(hotspotIp))
+                return hotspotIp;
+        }
+
         try
         {
             // get the local ip address by connecting to a public dns server
@@ -89,6 +97,25 @@ public class NetworkService : INetworkService
                       ni.NetworkInterfaceType != NetworkInterfaceType.Tunnel);
     }
 
+    public async Task<bool> IsWifiHotspotEnabled()
+    {
+        try
+        {
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            var wifiAp = interfaces.FirstOrDefault(ni =>
+                ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 &&
+                ni.OperationalStatus == OperationalStatus.Up &&
+                ni.Description.ToLower().Contains("hotspot"));
+
+            return wifiAp != null;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error checking hotspot status: {ex.Message}");
+            return false;
+        }
+    }
+
     private async void OnNetworkAddressChanged(object? sender, EventArgs e)
     {
         // Handle network address changes if needed
@@ -120,5 +147,25 @@ public class NetworkService : INetworkService
             }
         }
         return "127.0.0.1";
+    }
+
+    private string GetHotspotIpAddress()
+    {
+        var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+        var wifiAp = interfaces.FirstOrDefault(ni =>
+            ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 &&
+            ni.OperationalStatus == OperationalStatus.Up &&
+            ni.Description.ToLower().Contains("hotspot"));
+
+        if (wifiAp != null)
+        {
+            var ipProps = wifiAp.GetIPProperties();
+            var ipv4 = ipProps.UnicastAddresses
+                .FirstOrDefault(addr => addr.Address.AddressFamily == AddressFamily.InterNetwork);
+
+            if (ipv4 != null)
+                return ipv4.Address.ToString();
+        }
+        return string.Empty;
     }
 }

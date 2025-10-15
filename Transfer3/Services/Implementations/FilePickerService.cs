@@ -18,6 +18,7 @@ public class FilePickerService : IFilePickerService
             System.Diagnostics.Debug.WriteLine($"File picker error: {ex.Message}");
             return null;
         }
+
     }
 
     public async Task<string?> PickFolderAsync()

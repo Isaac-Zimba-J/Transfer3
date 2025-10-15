@@ -34,6 +34,8 @@ public interface INetworkService
     /// </summary>
     Task<string> GetBroadcastAddressAsync();
 
-
-
+    /// <summary>
+    /// Check if the Wi-Fi hotspot is enabled.
+    /// </summary>
+    Task<bool> IsWifiHotspotEnabled();
 }

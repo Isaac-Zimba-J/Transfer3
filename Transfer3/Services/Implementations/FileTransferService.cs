@@ -136,6 +136,7 @@ public class FileTransferService : IFileTransferService
         return _transferHistory.ToList();
     }
 
+
     private async Task AcceptConnectionsAsync(CancellationToken token)
     {
         while (!token.IsCancellationRequested && _tcpListener != null)
