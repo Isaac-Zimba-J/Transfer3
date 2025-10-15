@@ -1,8 +1,8 @@
-# 📁 Cross-Platform File Transfer App
+# 📁 Cross-Platform File Trasnfer3
 
 A modern, wireless file transfer application built with .NET MAUI that enables seamless file sharing between Android, iOS, Windows, and macOS devices on the same local network.
 
-![.NET MAUI](https://img.shields.io/badge/.NET%20MAUI-8.0-512BD4?style=for-the-badge&logo=.net)
+![.NET MAUI](https://img.shields.io/badge/.NET%20MAUI-9.0-512BD4?style=for-the-badge&logo=.net)
 ![C#](https://img.shields.io/badge/C%23-11.0-239120?style=for-the-badge&logo=c-sharp)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
@@ -16,57 +16,7 @@ A modern, wireless file transfer application built with .NET MAUI that enables s
 - 📜 **Transfer History** - Track all your file transfers
 - 🎨 **Modern UI** - Clean, intuitive Material Design interface
 
-## 🏗️ Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     FILE TRANSFER APP ARCHITECTURE                   │
-└─────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────┐
-│                         PRESENTATION LAYER                           │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
-│  │  MainPage    │  │   Devices    │  │   Active     │              │
-│  │   (XAML)     │  │     Tab      │  │  Transfers   │              │
-│  └──────────────┘  └──────────────┘  └──────────────┘              │
-└─────────────────────────────────────────────────────────────────────┘
-                              ▲ Data Binding
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                       APPLICATION LAYER (MVVM)                       │
-│  ┌──────────────────────────────────────────────────────┐           │
-│  │              MainViewModel (ObservableObject)         │           │
-│  │  • Commands: Start/Stop Discovery, Send File         │           │
-│  │  • Properties: Devices, Transfers, Status             │           │
-│  │  • Events: Progress, Completion, Discovery            │           │
-│  └──────────────────────────────────────────────────────┘           │
-└─────────────────────────────────────────────────────────────────────┘
-                              ▲ Dependency Injection
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                          SERVICE LAYER                               │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
-│  │    Discovery    │  │  File Transfer  │  │    Network      │    │
-│  │     Service     │  │     Service     │  │    Service      │    │
-│  │                 │  │                 │  │                 │    │
-│  │  • Broadcast    │  │  • Send File    │  │  • Get IP       │    │
-│  │  • Listen       │  │  • Receive      │  │  • Check Conn   │    │
-│  │  • Heartbeat    │  │  • Progress     │  │  • Broadcast    │    │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
-└─────────────────────────────────────────────────────────────────────┘
-                              ▲
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                          DOMAIN LAYER                                │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐    │
-│  │   DeviceInfo    │  │ FileTransferInfo│  │     Enums       │    │
-│  │                 │  │                 │  │                 │    │
-│  │  • Name         │  │  • FileName     │  │  • DeviceType   │    │
-│  │  • IP Address   │  │  • Progress     │  │  • Status       │    │
-│  │  • DeviceType   │  │  • Speed        │  │  • MessageType  │    │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘    │
-└─────────────────────────────────────────────────────────────────────┘
-```
+## Screenshots
 
 ## 🔄 How It Works - Visual Flow
 
@@ -203,7 +153,7 @@ TCP File Transfer Packet Structure:
 
 ## 📋 Prerequisites
 
-- **.NET 8 SDK** or later
+- **.NET 9 SDK** or later
 - **Visual Studio 2022** (17.8+) or **Visual Studio Code** with C# extensions
 - **MAUI Workload**: Run `dotnet workload install maui`
 
@@ -218,8 +168,8 @@ TCP File Transfer Packet Structure:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/file-transfer-app.git
-cd file-transfer-app
+git clone https://github.com/Isaac-Zimba-J/Transfer3.git
+cd Transfer3
 ```
 
 ### 2. Install Dependencies
@@ -237,65 +187,79 @@ dotnet add package CommunityToolkit.Mvvm --version 8.2.2
 ### 4. Configure Permissions
 
 #### Android (Platforms/Android/AndroidManifest.xml)
+
 Already configured with:
+
 - Internet access
 - Network state access
 - Storage permissions
 
 #### iOS/macOS (Platforms/MacCatalyst/Entitlements.plist)
+
 Already configured with:
+
 - Network client/server capabilities
 - File access permissions
 
 ### 5. Build and Run
 
 #### Android
+
 ```bash
-dotnet build -t:Run -f net8.0-android
+dotnet build -t:Run -f net9.0-android
 ```
 
 #### iOS
+
 ```bash
-dotnet build -t:Run -f net8.0-ios
+dotnet build -t:Run -f net9.0-ios
 ```
 
 #### macOS
+
 ```bash
-dotnet build -t:Run -f net8.0-maccatalyst
+dotnet build -t:Run -f net9.0-maccatalyst
 ```
 
 #### Windows
+
 ```bash
-dotnet build -t:Run -f net8.0-windows10.0.19041.0
+dotnet build -t:Run -f net9.0-windows10.0.19041.0
 ```
 
 ## 📱 Usage
 
 ### Step 1: Launch on Multiple Devices
+
 Install and launch the app on 2+ devices connected to the **same WiFi network**.
 
 ### Step 2: Discover Devices
+
 The app automatically discovers nearby devices. You'll see them appear in the **Devices** tab within seconds.
 
 ### Step 3: Send a File
+
 1. Select a device from the **Devices** tab
 2. Tap **"Send File to Selected Device"**
 3. Choose a file from your device
 4. On the receiving device, tap **Accept** when prompted
 
 ### Step 4: Monitor Progress
+
 Watch real-time transfer progress in the **Active** tab:
+
 - Progress bar with percentage
 - Transfer speed (MB/s)
 - Remaining time estimate
 
 ### Step 5: View History
+
 Check completed transfers in the **History** tab.
 
 ## 🏗️ Project Structure
 
 ```
-FileTransferApp/
+Transfer3/
 ├── Domain/
 │   ├── Entities/
 │   │   ├── DeviceInfo.cs          # Device representation
@@ -345,10 +309,12 @@ FileTransferApp/
 ## 🔧 Configuration
 
 ### Ports
+
 - **Discovery Port (UDP)**: 48888
 - **Transfer Port (TCP)**: 48889
 
 Change in service implementations if these ports are blocked:
+
 ```csharp
 // DeviceDiscoveryService.cs
 private const int DiscoveryPort = 48888;
@@ -358,6 +324,7 @@ private const int TransferPort = 48889;
 ```
 
 ### Transfer Settings
+
 ```csharp
 // FileTransferService.cs
 private const int BufferSize = 8192;  // 8KB chunks (increase for faster transfer)
@@ -370,11 +337,13 @@ private const int DeviceTimeoutSeconds = 15;        // Device offline timeout
 ## 🧪 Testing
 
 ### Unit Testing Services
+
 ```bash
 dotnet test
 ```
 
 ### Manual Testing Checklist
+
 - [ ] App launches on all target platforms
 - [ ] Devices discover each other within 5 seconds
 - [ ] File picker opens correctly
@@ -390,6 +359,7 @@ dotnet test
 **Problem**: Devices don't appear in the list
 
 **Solutions**:
+
 1. Ensure both devices on same WiFi (not cellular/different networks)
 2. Check firewall settings:
    - **Windows**: Allow app through Windows Firewall
@@ -403,6 +373,7 @@ dotnet test
 **Problem**: Transfer starts but fails midway
 
 **Solutions**:
+
 1. Check available storage on receiving device
 2. Verify file permissions (both read and write)
 3. Ensure stable WiFi connection
@@ -414,6 +385,7 @@ dotnet test
 **Problem**: App crashes or can't access files
 
 **Solutions**:
+
 1. **Android**: Go to Settings → Apps → File Transfer → Permissions → Enable Storage
 2. **iOS**: Settings → Privacy → Files and Folders → Enable
 3. Uninstall and reinstall app to trigger permission prompts
@@ -423,6 +395,7 @@ dotnet test
 **Problem**: Transfer slower than expected
 
 **Solutions**:
+
 1. Move closer to WiFi router
 2. Close other bandwidth-heavy apps
 3. Increase buffer size in `FileTransferService.cs`:
@@ -433,11 +406,13 @@ dotnet test
 ## 🔐 Security Considerations
 
 ⚠️ **Current Implementation**:
+
 - No encryption (plain text transfer)
 - No authentication
 - Local network only
 
 **For Production Use**, implement:
+
 - TLS/SSL encryption
 - Device pairing with QR codes
 - User authentication
@@ -447,12 +422,14 @@ dotnet test
 ## 📈 Performance
 
 ### Benchmarks
+
 - **Discovery Time**: 1-5 seconds
 - **Transfer Speed**: 10-50 MB/s (WiFi dependent)
 - **Memory Usage**: ~50-100 MB
 - **Battery Impact**: Low (discovery), Medium (active transfer)
 
 ### Optimization Tips
+
 1. **Faster Discovery**: Reduce heartbeat interval to 2 seconds
 2. **Faster Transfer**: Increase buffer size to 64KB
 3. **Better Battery**: Increase heartbeat to 10 seconds, pause discovery when backgrounded
@@ -474,8 +451,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourprofile)
+
+- GitHub: [@Isaac-Zimba-J](https://github.com/Isaac-Zimba-J)
+- LinkedIn: [Isaac Zimba](https://www.linkedin.com/in/isaac-zimba-842061239/)
 
 ## 🙏 Acknowledgments
 
@@ -485,9 +463,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: your.email@example.com
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/file-transfer-app/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/file-transfer-app/discussions)
+- 📧 Email: zimbaisaacj2002@gmail.com
+- 🐛 Issues: [GitHub Issues](https://github.com/Isaac-Zimba-J/Transfer3.git/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/Isaac-Zimba-J/Transfer3.git/discussions)
 
 ---
 
